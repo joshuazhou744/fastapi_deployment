@@ -2,7 +2,6 @@ from fastapi import FastAPI
 import motor.motor_asyncio
 import pprint
 from fastapi.middleware.cors import CORSMiddleware
-import asyncio
 
 from model import Climb
 from enum import Enum
