@@ -25,6 +25,15 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+@app.get("/test-db-connection")
+async def test_db_connection():
+    try:
+        # Check connection
+        await client.server_info()
+        return {"status": "success", "message": "Connected to MongoDB"}
+    except Exception as e:
+        return {"status": "error", "message": str(e)}
+
 def get_db():
     return client["test_db"]
 
