@@ -12,6 +12,8 @@ import os
 load_dotenv()
 DATABASE_URI = os.getenv("DATABASE_URI")
 
+client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI)
+
 app = FastAPI()
 
 origins = ["*"]
@@ -23,20 +25,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-def get_event_loop():
-    try:
-        loop = asyncio.get_running_loop()
-    except RuntimeError:  # "RuntimeError: There is no current event loop in thread 'main'"
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-    return loop
-
-def get_motor_client():
-    loop = get_event_loop()
-    return motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI, io_loop=loop)
-
-client = get_motor_client()
 
 @app.get("/test-db-connection")
 async def test_db_connection():
