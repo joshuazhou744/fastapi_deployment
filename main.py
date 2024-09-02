@@ -5,7 +5,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from boto.s3.connection import S3Connection
 
 from model import Climb
-from enum import Enum
 from dotenv import load_dotenv
 import os
 
