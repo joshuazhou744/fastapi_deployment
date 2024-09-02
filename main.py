@@ -5,14 +5,12 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from model import Climb
 from enum import Enum
-from dotenv import dotenv_values
+from dotenv import load_dotenv
 import os
 
-config = dotenv_values(".env")
-DATABASE_URI = config.get("DATABASE_URI")
-if os.getenv("DATABASE_URI") : DATABASE_URI = os.getenv("DATABASE_URI")
+load_dotenv()
+DATABASE_URI = os.getenv("DATABASE_URI")
 
-connection_string = DATABASE_URI
 client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI)
 
 app = FastAPI()
