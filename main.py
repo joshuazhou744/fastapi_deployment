@@ -11,7 +11,7 @@ import os
 load_dotenv()
 DATABASE_URI = os.getenv("DATABASE_URI")
 
-DB_PASS = S3Connection(os.environ['DB_PASS'], os.environ['DB_PASS'])
+DB_PASS = S3Connection(os.environ['DB_PASS'])
 HEROKU_DB_URI = f"mongodb+srv://admin:{DB_PASS}@cluster0.6jhzc.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 
 client = motor.motor_asyncio.AsyncIOMotorClient(HEROKU_DB_URI)
