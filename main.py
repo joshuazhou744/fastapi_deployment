@@ -7,7 +7,7 @@ from model import Climb
 from dotenv import load_dotenv
 import os
 
-if os.getenv("DATABASE_URI") is None:
+if os.getenv("VERCEL_ENV") is None:
     load_dotenv(dotenv_path='.env.local')
 
 DATABASE_URI = os.getenv("DATABASE_URI")
