@@ -7,10 +7,11 @@ from model import Climb
 from dotenv import load_dotenv
 import os
 
-if os.getenv("VERCEL_ENV") is None:
+if os.environ.get("VERCEL_ENV") is None:
     load_dotenv(dotenv_path='.env.local')
-
-DATABASE_URI = os.getenv("DATABASE_URI")
+    DATABASE_URI = os.getenv("DATABASE_URI")
+else:
+    DATABASE_URI = os.environ.get("DATABASE_URI")
 
 client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI)
 
