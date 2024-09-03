@@ -7,7 +7,9 @@ from model import Climb
 from dotenv import load_dotenv
 import os
 
-load_dotenv(dotenv_path='.env.local')
+if os.getenv("DATABASE_URI") is None:
+    load_dotenv(dotenv_path='.env.local')
+
 DATABASE_URI = os.getenv("DATABASE_URI")
 
 client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI)
