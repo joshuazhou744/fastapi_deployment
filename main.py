@@ -6,14 +6,13 @@ from fastapi.middleware.cors import CORSMiddleware
 from model import Climb
 from dotenv import load_dotenv
 import os
+import asyncio
 
 if os.environ.get("VERCEL_ENV") is None:
     load_dotenv(dotenv_path='.env.local')
     DATABASE_URI = os.getenv("DATABASE_URI")
 else:
     DATABASE_URI = os.environ.get("DATABASE_URI")
-
-client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI)
 
 app = FastAPI()
 
@@ -28,6 +27,16 @@ app.add_middleware(
 )
 
 def get_db():
+    global client
+    if not client:
+        # Ensure there's an event loop and set it if needed
+        try:
+            asyncio.get_running_loop()
+        except RuntimeError:  # No event loop currently running
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI)
     return client["test_db"]
 
 def get_climb_collection():
