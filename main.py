@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from model import Climb
 from dotenv import load_dotenv
 import os
-import asyncio
 
 if os.environ.get("VERCEL_ENV") is None:
     load_dotenv(dotenv_path='.env.local')
@@ -31,19 +30,13 @@ client = None
 def get_db():
     global client
     if not client:
-        try:
-            asyncio.get_running_loop()
-        except RuntimeError:
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
-
-        client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI)
+        client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI, maxPoolSize=10, serverSelectionTimeoutMS=5000)
     return client["test_db"]
 
 def get_climb_collection():
-    db = get_db()
-    collection = db["climbs"]
-    return collection
+    client = motor.motor_asyncio.AsyncIOMotorClient(DATABASE_URI)
+    db = client["test_db"]
+    return db["climbs"]
 
 @app.get("/climbs/")
 async def get_all_climbs():
@@ -84,7 +77,7 @@ async def test_get(title: str):
     return str(result)
 
 
-@app.put("/climbs/{climb_id}/{new_title}/")
+@app.put("/climbs/{climb_id}/{new_title}")
 async def change_title(climb_id: int, new_title: str):
     collection = get_climb_collection()
     result = await collection.update_one({"climb_id": climb_id}, {"$set": {"title": new_title}})
@@ -93,9 +86,9 @@ async def change_title(climb_id: int, new_title: str):
     print("document is now %s" % pprint.pformat(new_document))
     return str(new_document)
 
-@app.delete("/climbs/{title}/")
+@app.delete("/climbs/{title}}")
 async def del_climb(title: str):
-    collection = get_climb_collection()
+    collection = get_climb_collection() 
     n = await collection.count_documents({})
     print("%s documents before calling delete_one()" % n)
     result = await collection.delete_one({"title": title})
