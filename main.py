@@ -26,13 +26,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+
+client = None
 def get_db():
     global client
     if not client:
-        # Ensure there's an event loop and set it if needed
         try:
             asyncio.get_running_loop()
-        except RuntimeError:  # No event loop currently running
+        except RuntimeError:
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
@@ -61,7 +62,7 @@ async def post_climb(climb: Climb):
     result = await collection.insert_one(document)
     return str(result.inserted_id)
 
-@app.put("/climbs/{title}/{climb_id}")
+@app.put("/climbs/{title}/{climb_id}/")
 async def add_id(title: str, climb_id: int):
     collection = get_climb_collection()
     old_document = await collection.find_one({"title": title})
@@ -73,7 +74,7 @@ async def add_id(title: str, climb_id: int):
     print("document is now %s" % pprint.pformat(new_document))
     return str(new_document)
 
-@app.get("/climbs/{title}")
+@app.get("/climbs/{title}/")
 async def test_get(title: str):
     collection = get_climb_collection()
     result = await collection.find_one({"title": title})
@@ -92,7 +93,7 @@ async def change_title(climb_id: int, new_title: str):
     print("document is now %s" % pprint.pformat(new_document))
     return str(new_document)
 
-@app.delete("/climbs/{title}")
+@app.delete("/climbs/{title}/")
 async def del_climb(title: str):
     collection = get_climb_collection()
     n = await collection.count_documents({})
