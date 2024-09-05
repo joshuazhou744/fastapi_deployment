@@ -86,7 +86,7 @@ async def change_title(climb_id: int, new_title: str):
     print("document is now %s" % pprint.pformat(new_document))
     return str(new_document)
 
-@app.delete("/climbs/{title}}")
+@app.delete("/climbs/{title}")
 async def del_climb(title: str):
     collection = get_climb_collection() 
     n = await collection.count_documents({})
